@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+
+<body>
+
+    <button onclick="onButtonClick()">Get Battery level</button>
+
+    <script>
+        async function onButtonClick() {
+            try {
+                console.log('Requesting Bluetooth Device...');
+                // const device = await navigator.bluetooth.requestDevice({
+                //      filters: [{ services: ['battery_service'] }]
+
+                // });
+
+                const device = await navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+
+
+                console.log(device.characteristic)
+
+                console.log('Connecting to GATT Server...');
+                const server = await device.gatt.connect();
+
+                console.log('Getting Battery Service...');
+                const service = await server.getPrimaryService('battery_service');
+
+                console.log('Getting Battery Level Characteristic...');
+                const characteristic = await service.getCharacteristic('battery_level');
+
+                console.log('Reading Battery Level...');
+                const value = await characteristic.readValue();
+
+                console.log('> Battery Level is ' + value.getUint8(0) + '%');
+            } catch (error) {
+                console.log('Argh! ' + error);
+            }
+        }
+
+
+    </script>
+    <!-- <script type="text/javascript" src="index.js"></script> -->
+</body>
+
+</html>
